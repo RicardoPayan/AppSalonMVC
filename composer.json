@@ -1,0 +1,21 @@
+{
+    "name": "administrador/app-salon_php_mvc_js_sass",
+    "description": "Proyecto PHP8,MVC,SQL,SASS,GULP",
+    "type": "project",
+    "license": "no",
+    "autoload": {
+        "psr-4": {
+            "MVC\\": "./",
+            "Controllers\\": "./controllers",
+            "Model\\": "./models"
+
+        }
+    },
+    "authors": [
+        {
+            "name": "RicardoPayan",
+            "email": "a218206581@unison.mx"
+        }
+    ],
+    "require": {}
+}

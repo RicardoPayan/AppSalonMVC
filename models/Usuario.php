@@ -56,12 +56,26 @@ class Usuario extends ActiveRecord{
         if(!$this->telefono){
             self::$alertas['error'][]='El Telefono es Obligatorio';
         }
-
-
-
-
-
-
         return self::$alertas;
+    }
+
+    //Revisa si el usuario ya existe
+    public function existeUsuario(){
+        $query="SELECT * FROM " .self::$tabla. " WHERE email = '".$this->email .
+            "' LIMIT 1";
+        $resultado = self::$db->query($query);
+
+        if($resultado->num_rows){
+            self::$alertas['error'][]='El Usuario ya esta Registrado';
+        }
+        return $resultado;
+    }
+
+    public function hashPassword(){
+        $this->password=password_hash($this->password,PASSWORD_BCRYPT);
+    }
+
+    public function crearToken(){
+        $this->token = uniqid(); //Funcion para crear id unicos, combinacion de numeros de fuerte seguridad.
     }
 }

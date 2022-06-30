@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Classes\Email;
 use Model\Usuario;
 use MVC\Router;
 
@@ -38,6 +39,29 @@ class  LoginController{
             //Revisar que alertas este vacio
             if(empty($alertas)){
                 //Verificar que el usuario no esta registrado
+                $resultado=$usuario->existeUsuario();
+
+                if ($resultado->num_rows){
+                    $alertas= Usuario::getAlertas();
+                }else{
+                    //Hashear el password
+                    $usuario->hashPassword();
+
+                    //Generar un token unico
+                    $usuario->crearToken();
+
+                    //Enviar el Email
+                    $email = new Email($usuario->email,$usuario->nombre,$usuario->token);
+
+                    $email->enviarConfirmacion();
+
+                    //Crear el usuario
+                    $resultado=$usuario->guardar();
+                    if($resultado){
+                        header('Location: /mensaje');
+                    }
+                    
+                }
             }
 
         }
@@ -45,5 +69,9 @@ class  LoginController{
             'usuario'=>$usuario,
             'alertas'=>$alertas
         ]);
+    }
+
+    public static function mensaje(Router $router){
+        $router->render('auth/mensaje');
     }
 }

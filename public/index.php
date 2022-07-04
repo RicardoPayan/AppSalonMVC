@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/app.php';
 
 use MVC\Router;
 use Controllers\LoginController;
+use Controllers\CitaController;
 $router = new Router();
 
 //Iniciar Sesion
@@ -24,6 +25,10 @@ $router->post('/crear-cuenta',[LoginController::class,'crear']);
 //Confirmar cuenta
 $router->get('/confirmar-cuenta',[LoginController::class,'confirmar']);
 $router->get('/mensaje',[LoginController::class,'mensaje']);
+
+
+//AREA PRIVADA-----------------------------------------------
+$router->get('/cita',[CitaController::class,'index']);
 
 
 

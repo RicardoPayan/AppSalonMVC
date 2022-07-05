@@ -5,6 +5,7 @@ require_once __DIR__ . '/../includes/app.php';
 use MVC\Router;
 use Controllers\LoginController;
 use Controllers\CitaController;
+use Controllers\APIController;
 $router = new Router();
 
 //Iniciar Sesion
@@ -29,6 +30,9 @@ $router->get('/mensaje',[LoginController::class,'mensaje']);
 
 //AREA PRIVADA-----------------------------------------------
 $router->get('/cita',[CitaController::class,'index']);
+
+//API de citas
+$router->get('/api/servicios',[APIController::class,'index']);
 
 
 

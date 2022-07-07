@@ -2,6 +2,8 @@ let paso = 1;
 const pasoInicial = 1;
 const pasoFinal = 3;
 
+
+
 const cita ={
     nombre:'',
     fecha:'',
@@ -21,6 +23,12 @@ function iniciarApp(){
     paginaAnterior();
 
     consultarAPI(); //Consulta la API en el backend de PHP
+
+    nombreCliente(); //Añade el nombre del cliente al objeto de cita
+    seleccionarFecha(); //Anade la fecha de la cita en el objeto
+    seleccionarHora(); //Añade la hora de la cita en el objeto
+
+    mostrarResumen();
 }
 
 function mostrarSeccion(){
@@ -72,6 +80,7 @@ function botonesPaginador(){
     }else if(paso === 3){
         paginaAnterior.classList.remove('ocultar');
         paginaSiguiente.classList.add('ocultar');
+        mostrarResumen();
     }else{
         paginaAnterior.classList.remove('ocultar');
         paginaSiguiente.classList.remove('ocultar');
@@ -142,27 +151,134 @@ function seleccionarServicio(servicio){
     const {servicios} = cita;
 
     const divServicio = document.querySelector(`[data-id-servicio="${id}"]`)
-    
+
 
     //Identificar el elemento al que se le da click
     //Comprobar si un servicio ya fue agregado
     if(servicios.some(agregado => agregado.id === id)){
         //Eliminarlo
         cita.servicios = servicios.filter(agregado => agregado.id !== id);
-        console.log((cita.servicios))
+
         divServicio.classList.remove('seleccionado');
     }else{
         //agregarlo
         cita.servicios = [...servicios,servicio];
         divServicio.classList.add('seleccionado');
     }
+}
+
+const nombreCliente = () => cita.nombre = document.querySelector('#nombre').value;
+
+const seleccionarFecha = () => {
+    const inputFecha = document.querySelector('#fecha');
+    inputFecha.addEventListener('input', function (e){
+        const dia = new Date(e.target.value).getUTCDay();
+        if([6,0].includes(dia)){
+            e.target.value='';
+            mostrarAlerta('Fines de semana no permitidos','error','.formulario');
+        }else{
+           cita.fecha = e.target.value;
+        }
+    })
+}
+
+function seleccionarHora(){
+    const inputHora = document.querySelector('#hora');
+    inputHora.addEventListener('input',function (e){
+
+
+        const horaCita = e.target.value;
+        const hora = horaCita.split(':')[0];
+
+        //Dentro del horario de atencion
+        if(hora<10 || hora>18){
+            e.target.value = '';
+            mostrarAlerta('Horario de atencion: 10:00 - 18:00','error','.formulario');
+        }else{
+            cita.hora = e.target.value;
+        }
+    })
+}
+
+function mostrarAlerta(mensaje,tipo,elemento,desaparece = true){
+    const existeAlerta = document.querySelector('.alerta');
+
+    if(existeAlerta){
+       existeAlerta.remove();
+    }
+
+    const alerta = document.createElement('div');
+    alerta.textContent = mensaje;
+    alerta.classList.add('alerta');
+    alerta.classList.add(tipo);
+
+    const referencia = document.querySelector(elemento);
+    referencia.appendChild(alerta);
+
+    if(desaparece){
+        setTimeout(()=>{
+            alerta.remove();
+        },3000)
+    }
+}
+
+function mostrarResumen(){
+    const resumen = document.querySelector('.contenido-resumen');
+
+    //Limpiar el contenido de resumen
+    while (resumen.firstChild){
+        resumen.removeChild(resumen.firstChild);
+    }
+
+    if(Object.values(cita).includes('') || cita.servicios.length === 0){
+        mostrarAlerta('Faltan datos o no se ha seleccionado servicio','error','.contenido-resumen',false);
+        return
+    }
+
+    //Formatear el div de resumen
+    const {nombre,fecha,hora,servicios} = cita;
 
 
 
+    const headerServicios = document.createElement('h3');
+    headerServicios.textContent = 'Resumen de Servicios';
+    resumen.appendChild(headerServicios);
 
+    servicios.forEach(servicio => {
+        const {id,nombre,precio} = servicio;
 
+        const contenedorServicio = document.createElement('div');
+        contenedorServicio.classList.add('contenedor-servicio');
 
+        const textoServicio = document.createElement('p');
+        textoServicio.textContent = nombre
 
-    console.log(cita);
+        const precioServicio = document.createElement('p');
+        precioServicio.innerHTML = `<span>Precio:</span> $${precio}`
+
+        contenedorServicio.appendChild(textoServicio);
+        contenedorServicio.appendChild(precioServicio);
+
+        resumen.appendChild(contenedorServicio);
+    })
+
+    //headin para cita en resumen
+    const headerCita = document.createElement('h3');
+    headerCita.textContent = 'Resumen de Cita';
+    resumen.appendChild(headerCita);
+
+    const nombreCliente = document.createElement('p');
+    nombreCliente.innerHTML = `<span>Nombre:</span> ${nombre}`;
+
+    const fechaCita = document.createElement('p');
+    fechaCita.innerHTML = `<span>Fecha:</span> ${fecha}`;
+
+    const horaCita = document.createElement('p');
+    horaCita.innerHTML = `<span>Hora:</span> ${hora} Horas`;
+
+    resumen.appendChild(nombreCliente);
+    resumen.appendChild(fechaCita);
+    resumen.appendChild(horaCita);
 
 }
+

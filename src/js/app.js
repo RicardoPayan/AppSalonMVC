@@ -270,15 +270,38 @@ function mostrarResumen(){
     const nombreCliente = document.createElement('p');
     nombreCliente.innerHTML = `<span>Nombre:</span> ${nombre}`;
 
+    //Formartear la fecha en español
+    const fechaOBJ =  new Date(fecha);
+    const mes = fechaOBJ.getMonth();
+    const dia = fechaOBJ.getDate() + 2;
+    const year = fechaOBJ.getFullYear();
+
+    const fechaUTC = new Date(Date.UTC(year,mes,dia));
+
+    const opciones = {weekday: 'long',year:'numeric',month:'long', day:'numeric'}
+    const fechaFormateada = fechaUTC.toLocaleDateString('es-MX',opciones);
+
+
     const fechaCita = document.createElement('p');
-    fechaCita.innerHTML = `<span>Fecha:</span> ${fecha}`;
+    fechaCita.innerHTML = `<span>Fecha:</span> ${fechaFormateada}`;
 
     const horaCita = document.createElement('p');
     horaCita.innerHTML = `<span>Hora:</span> ${hora} Horas`;
 
+    //Boton para crear una cita
+    const botonReservar = document.createElement('BUTTON');
+    botonReservar.classList.add('boton');
+    botonReservar.textContent = 'Reservar Cita';
+    botonReservar.onclick = reservarCita;
+
     resumen.appendChild(nombreCliente);
     resumen.appendChild(fechaCita);
     resumen.appendChild(horaCita);
+    resumen.appendChild(botonReservar)
 
+}
+
+function reservarCita(){
+    console.log('Reservando...')
 }
 

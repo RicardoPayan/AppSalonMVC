@@ -301,7 +301,19 @@ function mostrarResumen(){
 
 }
 
-function reservarCita(){
-    console.log('Reservando...')
+async function reservarCita(){
+    const datos = new FormData();
+    datos.append('nombre','Juan');
+
+    //Peticion hacia la api
+    const url = 'http://localhost/api/citas';
+    const respuesta = await fetch(url,{
+        method: 'POST'
+    });
+
+    const resultado = await respuesta.json();
+    console.log(resultado)
+
+    /*console.log([...datos])*/
 }
 

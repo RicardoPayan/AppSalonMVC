@@ -5,6 +5,7 @@ const pasoFinal = 3;
 
 
 const cita ={
+    id:'',
     nombre:'',
     fecha:'',
     hora:'',
@@ -24,6 +25,7 @@ function iniciarApp(){
 
     consultarAPI(); //Consulta la API en el backend de PHP
 
+    idCliente();
     nombreCliente(); //Añade el nombre del cliente al objeto de cita
     seleccionarFecha(); //Anade la fecha de la cita en el objeto
     seleccionarHora(); //Añade la hora de la cita en el objeto
@@ -166,7 +168,7 @@ function seleccionarServicio(servicio){
         divServicio.classList.add('seleccionado');
     }
 }
-
+const idCliente = () => cita.id = document.querySelector('#id').value;
 const nombreCliente = () => cita.nombre = document.querySelector('#nombre').value;
 
 const seleccionarFecha = () => {
@@ -302,18 +304,47 @@ function mostrarResumen(){
 }
 
 async function reservarCita(){
+
+    const {id,fecha,hora,servicios} = cita;
+    const idServicios = servicios.map(servicio => servicio.id);
+
     const datos = new FormData();
-    datos.append('nombre','Juan');
+    datos.append('fecha',fecha);
+    datos.append('hora',hora);
+    datos.append('usuarioId',id);
+    datos.append('servicios',idServicios);
 
-    //Peticion hacia la api
-    const url = 'http://localhost/api/citas';
-    const respuesta = await fetch(url,{
-        method: 'POST'
-    });
+   /* console.log([...datos])*/
 
-    const resultado = await respuesta.json();
-    console.log(resultado)
+    try{
+        //Peticion hacia la api
+        const url = 'http://localhost/api/citas';
+        const respuesta = await fetch(url,{
+            method: 'POST',
+            body: datos
+        });
 
-    /*console.log([...datos])*/
+        const resultado = await respuesta.json();
+        if(resultado.resultado){
+            Swal.fire({
+                icon: 'success',
+                title: 'Cita Creada',
+                text: 'Tu cita fue creada correctamente',
+                button: 'OK'
+            }).then(()=>{
+                setTimeout(()=>{
+                    window.location.reload();
+                },3000)
+            })
+        }
+    }catch (error){
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Algo salio mal al guardar la cita',
+
+        })
+    }
+
 }
 

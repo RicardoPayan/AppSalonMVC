@@ -29,6 +29,11 @@
       overflow: scroll;
     }
   }
+
+  /*Para que no se muestran las barras de scrol, pero si funcionen*/
+  .app::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .barra{
